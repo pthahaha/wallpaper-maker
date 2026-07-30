@@ -485,7 +485,17 @@
     const img = new Image();
     img.onload = () => {
       URL.revokeObjectURL(img.src);
-      bgImg = img;
+      // 한 번만 축소해 두면 이후 매 렌더가 가벼워진다
+      // ponytail: 최장변 2600px 고정, 3120px급 기기에선 살짝 업스케일됨
+      const MAX = 2600, r = Math.min(1, MAX / Math.max(img.width, img.height));
+      if (r < 1) {
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        bgImg = c;
+      } else {
+        bgImg = img;
+      }
       document.getElementById('bgOpts').style.display = 'block';
       render();
     };
