@@ -71,7 +71,7 @@
   .check { display:flex; align-items:center; gap:9px; font-size:13px; color:var(--muted); cursor:pointer; user-select:none; }
   .check input { accent-color:var(--accent); width:16px; height:16px; }
 
-  .preview-col { position:sticky; top:24px; }
+  @media (min-width:781px){ .preview-col { position:sticky; top:24px; } }
   .phone { position:relative; width:100%; max-width:290px; margin:0 auto 10px; border-radius:34px; overflow:hidden; border:1px solid #2A2F36; box-shadow:0 18px 50px rgba(0,0,0,.6); }
   .phone canvas { width:100%; height:auto; display:block; }
   .dims { text-align:center; font-size:11px; color:var(--dim); margin-bottom:14px; letter-spacing:.04em; }
