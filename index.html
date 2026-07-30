@@ -531,10 +531,14 @@
     const d = dev();
     const dt = new Date();
     const stamp = dt.getFullYear() + String(dt.getMonth()+1).padStart(2,'0') + String(dt.getDate()).padStart(2,'0');
-    const dl = document.getElementById('dlBtn');
-    dl.href = cv.toDataURL('image/png');
-    dl.download = 'lockscreen-' + d.w + 'x' + d.h + '-' + stamp + '.png';
-    dl.click();
+    // data: URL은 iOS Safari에서 탭 메모리를 터뜨릴 수 있어 blob 사용
+    cv.toBlob(b => {
+      const dl = document.getElementById('dlBtn');
+      dl.href = URL.createObjectURL(b);
+      dl.download = 'lockscreen-' + d.w + 'x' + d.h + '-' + stamp + '.png';
+      dl.click();
+      setTimeout(() => URL.revokeObjectURL(dl.href), 10000);
+    }, 'image/png');
   });
 
   /* ---------- 날짜 ---------- */
