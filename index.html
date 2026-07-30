@@ -6,6 +6,11 @@
 <title>잠금화면 문구 만들기</title>
 <meta name="description" content="원하는 문구를 넣어 아이폰·갤럭시 잠금화면 배경을 만듭니다. 설치 없이 브라우저에서 바로.">
 <meta name="theme-color" content="#0A0B0D">
+<script>
+// 카카오톡 인앱 브라우저는 blob 다운로드가 안 되므로 기본 브라우저로 내보낸다
+if (/KAKAOTALK/i.test(navigator.userAgent))
+  location.replace('kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href));
+</script>
 
 <!-- 홈 화면에 추가하면 앱처럼 전체화면으로 실행 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
