@@ -535,8 +535,9 @@
     // data: URL은 iOS Safari에서 탭 메모리를 터뜨릴 수 있어 blob 사용
     cv.toBlob(async b => {
       const file = new File([b], name, { type: 'image/png' });
-      // 모바일: 공유 시트를 바로 띄워 "이미지 저장" 한 번으로 사진 앱 저장
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      // iOS만 공유 시트 사용(웹에서 사진 앱 직접 저장 불가). 안드로이드는 다운로드가 곧 갤러리 저장
+      const ios = /iPhone|iPad/.test(navigator.userAgent);
+      if (ios && navigator.canShare && navigator.canShare({ files: [file] })) {
         try { await navigator.share({ files: [file] }); return; }
         catch (e) { if (e.name === 'AbortError') return; }   // 사용자가 닫음
       }
