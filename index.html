@@ -547,6 +547,7 @@
     const dl = document.getElementById('dlBtn');
     dl.href = url;
     dl.download = 'lockscreen-' + d.w + 'x' + d.h + '-' + stamp + '.png';
+    dl.click();   // 바로 다운로드
 
     const isPhone = /iPhone|iPad|Android/.test(navigator.userAgent);
     document.getElementById('saveMsg').innerHTML = isPhone
