@@ -187,7 +187,7 @@
 
     <div id="saveArea">
       <img id="outImg" alt="완성된 배경화면">
-      <a class="primary" id="dlBtn" download="lockscreen.png">PNG 다운로드</a>
+      <a id="dlBtn" style="display:none" download="lockscreen.png"></a>
       <p id="saveMsg"></p>
     </div>
 
@@ -551,8 +551,8 @@
 
     const isPhone = /iPhone|iPad|Android/.test(navigator.userAgent);
     document.getElementById('saveMsg').innerHTML = isPhone
-      ? '<b>이미지를 길게 눌러 사진 앱에 저장</b>하세요. 다운로드 버튼은 파일 앱으로 가서 한 단계 더 걸립니다.'
-      : '다운로드하거나 이미지를 우클릭해 저장할 수 있습니다.';
+      ? '다운로드가 시작됐어요. 사진 앱에 넣으려면 <b>이미지를 길게 눌러 저장</b>하세요.'
+      : '다운로드가 시작됐어요. 이미지를 우클릭해 저장할 수도 있습니다.';
 
     document.getElementById('saveArea').style.display = 'block';
     document.getElementById('saveArea').scrollIntoView({ behavior:'smooth', block:'center' });
