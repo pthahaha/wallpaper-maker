@@ -68,6 +68,8 @@
   .swatches button { width:34px; height:34px; border-radius:50%; border:2px solid transparent; cursor:pointer; }
   .swatches button[aria-pressed=true] { border-color:var(--fg); }
 
+  input[type=range]{ width:100%; accent-color:var(--accent); }
+
   .check { display:flex; align-items:center; gap:9px; font-size:13px; color:var(--muted); cursor:pointer; user-select:none; }
   .check input { accent-color:var(--accent); width:16px; height:16px; }
 
@@ -149,6 +151,17 @@
         <button data-v="#8FB08A" aria-pressed="false" style="background:#8FB08A"></button>
         <button data-v="#C77B6B" aria-pressed="false" style="background:#C77B6B"></button>
         <button data-v="#F2F2EF" aria-pressed="false" style="background:#F2F2EF"></button>
+      </div>
+    </div>
+
+    <div class="group">
+      <label class="eyebrow">배경 사진</label>
+      <input type="file" id="bgFile" accept="image/*" hidden>
+      <button class="add-btn" id="bgPick">사진 선택</button>
+      <div id="bgOpts" style="display:none">
+        <div class="field" style="margin-top:9px"><span class="cap">어둡기</span>
+          <input type="range" id="bgDim" min="0" max="90" value="60"></div>
+        <button class="ghost" id="bgClear" style="width:100%">사진 제거</button>
       </div>
     </div>
 
@@ -247,9 +260,10 @@
     quote:'시간은 누구에게나 공평하다', sectionLabel:'매일',
     items:['운동','청소','독서'],
     closingSmall:'마음 먹기 나름', closingBig:'한번 해보자',
-    signature:'일단비버', marker:'none', accent:'#E0A040', device:0
+    signature:'일단비버', marker:'none', accent:'#E0A040', device:0, bgDim:.6
   };
   let state = JSON.parse(JSON.stringify(DEFAULTS));
+  let bgImg = null;   // 업로드한 배경 사진 (Image), 상태와 별도 보관
 
   const cv = document.getElementById('cv');
   const ctx = cv.getContext('2d');
@@ -302,9 +316,17 @@
     const padX = L.padX * W;
     const maxW = W - padX * 2;
 
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, C.bgTop); g.addColorStop(.55, C.bgMid); g.addColorStop(1, C.bgTop);
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    if (bgImg) {
+      const r = Math.max(W / bgImg.width, H / bgImg.height);   // cover, 중앙 크롭
+      const dw = bgImg.width * r, dh = bgImg.height * r;
+      ctx.drawImage(bgImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      ctx.fillStyle = 'rgba(10,11,13,' + state.bgDim + ')';
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, C.bgTop); g.addColorStop(.55, C.bgMid); g.addColorStop(1, C.bgTop);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
     ctx.textBaseline = 'alphabetic';
 
     // 상단 문구
@@ -453,6 +475,33 @@
     document.documentElement.style.setProperty('--accent', state.accent);
   });
 
+  /* ---------- 배경 사진 ---------- */
+
+  const bgFile = document.getElementById('bgFile');
+  document.getElementById('bgPick').addEventListener('click', () => bgFile.click());
+  bgFile.addEventListener('change', () => {
+    const f = bgFile.files[0];
+    if (!f) return;
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(img.src);
+      bgImg = img;
+      document.getElementById('bgOpts').style.display = 'block';
+      render();
+    };
+    img.src = URL.createObjectURL(f);
+  });
+  document.getElementById('bgDim').addEventListener('input', e => {
+    state.bgDim = e.target.value / 100; render();
+  });
+  function clearBg() {
+    bgImg = null; bgFile.value = '';
+    state.bgDim = DEFAULTS.bgDim;
+    document.getElementById('bgDim').value = DEFAULTS.bgDim * 100;
+    document.getElementById('bgOpts').style.display = 'none';
+  }
+  document.getElementById('bgClear').addEventListener('click', () => { clearBg(); render(); });
+
   document.getElementById('showGuide').addEventListener('change', e => {
     const show = e.target.checked;
     ['ovDate','ovTime','ovWidget','ovBottom'].forEach(id => {
@@ -472,6 +521,7 @@
     document.querySelectorAll('#colorSwatches button').forEach(b =>
       b.setAttribute('aria-pressed', String(b.dataset.v === state.accent)));
     document.documentElement.style.setProperty('--accent', state.accent);
+    clearBg();
     renderItems(); render();
     document.getElementById('saveArea').style.display = 'none';
   });
