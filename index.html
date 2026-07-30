@@ -91,11 +91,6 @@
   .hint { font-size:12px; color:var(--dim); max-width:290px; margin:12px auto 0; line-height:1.6; }
   .hint b { color:var(--muted); font-weight:600; }
 
-  #saveArea { max-width:290px; margin:14px auto 0; display:none; }
-  #saveArea img { width:100%; border-radius:12px; display:block; border:1px solid var(--line); }
-  #saveArea #dlBtn { margin-top:10px; }
-  #saveArea p { font-size:12px; color:var(--dim); margin:9px 0 0; line-height:1.6; }
-  #saveArea p b { color:var(--accent); font-weight:600; }
 </style>
 
 <div class="wrap">
@@ -185,11 +180,7 @@
       <button class="ghost" id="resetBtn">기본값으로 되돌리기</button>
     </div>
 
-    <div id="saveArea">
-      <img id="outImg" alt="완성된 배경화면">
-      <a id="dlBtn" style="display:none" download="lockscreen.png"></a>
-      <p id="saveMsg"></p>
-    </div>
+    <a id="dlBtn" style="display:none" download="lockscreen.png"></a>
 
     <p class="hint">점선은 <b>위젯 자리</b>, 위쪽은 <b>시계</b>입니다. 문구가 가려지지 않는지 확인하세요.</p>
   </div>
@@ -533,29 +524,17 @@
     document.documentElement.style.setProperty('--accent', state.accent);
     clearBg();
     renderItems(); render();
-    document.getElementById('saveArea').style.display = 'none';
   });
 
   document.getElementById('makeBtn').addEventListener('click', () => {
     render();
     const d = dev();
-    const url = cv.toDataURL('image/png');
-    document.getElementById('outImg').src = url;
-
     const dt = new Date();
     const stamp = dt.getFullYear() + String(dt.getMonth()+1).padStart(2,'0') + String(dt.getDate()).padStart(2,'0');
     const dl = document.getElementById('dlBtn');
-    dl.href = url;
+    dl.href = cv.toDataURL('image/png');
     dl.download = 'lockscreen-' + d.w + 'x' + d.h + '-' + stamp + '.png';
-    dl.click();   // 바로 다운로드
-
-    const isPhone = /iPhone|iPad|Android/.test(navigator.userAgent);
-    document.getElementById('saveMsg').innerHTML = isPhone
-      ? '다운로드가 시작됐어요. 사진 앱에 넣으려면 <b>이미지를 길게 눌러 저장</b>하세요.'
-      : '다운로드가 시작됐어요. 이미지를 우클릭해 저장할 수도 있습니다.';
-
-    document.getElementById('saveArea').style.display = 'block';
-    document.getElementById('saveArea').scrollIntoView({ behavior:'smooth', block:'center' });
+    dl.click();
   });
 
   /* ---------- 날짜 ---------- */
